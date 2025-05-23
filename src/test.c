@@ -1,0 +1,17 @@
+#include "modding.h"
+#include "global.h"
+#include "recomputils.h"
+#include "recompconfig.h"
+
+#include "do_action_helper.h"
+
+RECOMP_IMPORT(".", void DoActionHelper_RegisterAction(DoActionLevel level, DoActionCondition condition, unsigned int priority, char name[32]));
+
+bool Goron_Test(CONDITION_PARAMETERS) {
+    *doAction = DO_ACTION_DANCE;
+    return true;
+}
+
+RECOMP_CALLBACK(".", DAH_on_init) void DAH__on_init() {
+    DoActionHelper_RegisterAction(ATTACK_GORON, Goron_Test, 44, "Modern Throwing");
+}
