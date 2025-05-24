@@ -591,7 +591,11 @@ RECOMP_CALLBACK("*", recomp_on_init) void on_init() {
 
     for (DoActionLevel level = ATTACK_GORON; level <= ACTION; level++) {
         for (int priority = 0; priority < 256; priority++) {
-            strcpy(doActionSources[level][priority], "Vanilla");
+            if (doActionConditions[level][priority] != NULL) {
+                strcpy(doActionSources[level][priority], "Vanilla");
+            } else {
+                strcpy(doActionSources[level][priority], "NULL");
+            }
         }
     }
 
@@ -600,11 +604,6 @@ RECOMP_CALLBACK("*", recomp_on_init) void on_init() {
 
 // Ensure that name is less than 33 characters in length, including null terminator
 RECOMP_EXPORT void DoActionHelper_RegisterAction(DoActionLevel level, DoActionCondition condition, unsigned int priority, char name[32]) {
-    if (strlen(name) > 31) {
-        Notifications_Emit("Do Action Helper", "Do Action registration aborted - mod name too long.", "");
-        return;
-    }
-
     static char actionLevels[5][7] = {
         "GORON",
         "ZORA",
@@ -613,23 +612,30 @@ RECOMP_EXPORT void DoActionHelper_RegisterAction(DoActionLevel level, DoActionCo
         "ACTION"
     };
 
-    if (doActionConditions[level][priority] != NULL){
-        char message[128];
-        sprintf(message, "%s has overwriten %s's Do Action with priority %u on level %s.", name,
-            doActionSources[level][priority], priority, actionLevels[level]);
-
-        char bugs[13];
-        if (strcmp(doActionSources[level][priority], "Vanilla") == 0) {
-            bugs[0] = '\0';
-        } else {
-            strcpy(bugs, "Expect bugs.");
-        }
-
-        Notifications_Emit("Do Action Helper", message, bugs);
+    if (strlen(name) > 31) {
+        Notifications_Emit("Do Action Helper", "Do Action registration aborted - mod name too long.", "");
+        return;
     }
 
     doActionConditions[level][priority] = condition;
-    strcpy(doActionSources[level][priority], name);
+
+    u32 notificationsConfig = recomp_get_config_u32("conflict_notifications");
+
+    if ((strcmp(doActionSources[level][priority], "NULL") != 0 || notificationsConfig == 3) && notificationsConfig != 0){
+        char message[128];
+        sprintf(message, "%s has overwriten %s's Do Action with priority %u on level %s.",
+            name, doActionSources[level][priority], priority, actionLevels[level]);
+
+        if (strcmp(doActionSources[level][priority], "Vanilla") == 0) {
+            if (notificationsConfig >= 2) {
+                Notifications_Emit("Do Action Helper", message, "");
+            }
+        } else {
+            Notifications_Emit("Do Action Helper", message, "Expect bugs.");
+        }
+
+        strcpy(doActionSources[level][priority], name);
+    }
 }
 
 #define CONDITION_CHECK_ATTACK(level)   for (int temp = 0; temp < 256; temp++) { \

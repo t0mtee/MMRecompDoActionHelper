@@ -56,4 +56,20 @@ func_reference_syms_file = "Zelda64RecompSyms/mm.us.rev1.syms.toml"
 data_reference_syms_files = [ "Zelda64RecompSyms/mm.us.rev1.datasyms.toml", "Zelda64RecompSyms/mm.us.rev1.datasyms_static.toml" ]
 
 # Additional files to include in the mod.
-additional_files = [ ]
+additional_files = [
+    "thumb.png"
+]
+
+[[manifest.config_options]]
+id = "conflict_notifications"
+name = "Conflict Notifications"
+description = """
+Would you like to receive notifications on game boot:
+- Never
+- When two mods change the same Do Action condition
+- When two mods change the same Do Action condition or when a mod changes a Vanilla Do Action
+- When a mod changes any Do Actions
+"""
+type = "Enum"
+options = [ "Never", "Mods", "Mods + Vanilla", "Any" ]
+default = "Mods"
