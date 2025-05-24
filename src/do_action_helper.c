@@ -533,6 +533,7 @@ bool Action_Putaway(CONDITION_PARAMETERS) {
 
 DoActionCondition doActionConditions[5][256];
 char doActionSources[5][256][128];
+u32 notificationsConfig;
 
 #define QUART_1 63
 #define QUART_2 127
@@ -599,6 +600,8 @@ RECOMP_CALLBACK("*", recomp_on_init) void on_init() {
         }
     }
 
+    notificationsConfig = recomp_get_config_u32("conflict_notifications");
+
     DAH_on_init();
 }
 
@@ -619,23 +622,23 @@ RECOMP_EXPORT void DoActionHelper_RegisterAction(DoActionLevel level, DoActionCo
 
     doActionConditions[level][priority] = condition;
 
-    u32 notificationsConfig = recomp_get_config_u32("conflict_notifications");
+    bool nullCondition = strcmp(doActionSources[level][priority], "NULL") == 0;
 
-    if ((strcmp(doActionSources[level][priority], "NULL") != 0 || notificationsConfig == 3) && notificationsConfig != 0){
+    if ((!nullCondition || notificationsConfig == 3) && notificationsConfig != 0){
         char message[128];
         sprintf(message, "%s has overwriten %s's Do Action with priority %u on level %s.",
             name, doActionSources[level][priority], priority, actionLevels[level]);
 
-        if (strcmp(doActionSources[level][priority], "Vanilla") == 0) {
+        if (strcmp(doActionSources[level][priority], "Vanilla") == 0 || nullCondition) {
             if (notificationsConfig >= 2) {
                 Notifications_Emit("Do Action Helper", message, "");
             }
         } else {
             Notifications_Emit("Do Action Helper", message, "Expect bugs.");
         }
-
-        strcpy(doActionSources[level][priority], name);
     }
+
+    strcpy(doActionSources[level][priority], name);
 }
 
 #define CONDITION_CHECK_ATTACK(level)   for (int temp = 0; temp < 256; temp++) { \
