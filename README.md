@@ -3,7 +3,7 @@
 A library mod that aims to provide mod developers a centralised interface for adding, changing, or removing Do Action conditions.
 
 Usage:
-1. Download the (header)[https://github.com/t0mtee/MMRecompDoActionHelper/tree/main/include_in_dependents/DAH_header.h] and place it in your mods include folder.
+1. Download the [header](https://github.com/t0mtee/MMRecompDoActionHelper/tree/main/include_in_dependents/DAH_header.h) and place it in your mods include folder.
 2. Add `mm_recomp_do_action_helper` as a dependency in `mod.toml`.
 3. Add `#include "DAH_header.h"` to your mod's source file.
 4. Create your condition. Have `CONDITION_PARAMETERS` be the parameters and set the Do Action with `*doAction = DO_ACTION_XXXX;`. Have the function return `true` if don't want other conditions to be checked, return `false` if you do. Here's an example:
