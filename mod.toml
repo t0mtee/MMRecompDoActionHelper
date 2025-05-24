@@ -65,10 +65,10 @@ id = "conflict_notifications"
 name = "Conflict Notifications"
 description = """
 Would you like to receive notifications on game boot:
-- Never
+- Never (not recommended)
 - When two mods change the same Do Action condition
-- When two mods change the same Do Action condition or when a mod changes a Vanilla Do Action
-- When a mod changes any Do Actions
+- When two mods change the same condition or when a mod changes a Vanilla condition
+- When a mod changes any conditions (even unassigned ones)
 """
 type = "Enum"
 options = [ "Never", "Mods", "Mods + Vanilla", "Any" ]

@@ -35,3 +35,5 @@ DAH_ON_INIT void DAH_on_init() {
 Notes:
 - The priorities of vanilla conditions can be seen in the source code.
 - You should check which priorities other mods use when they register conditions to prevent conflicts and make sure your condition is checked before or after other mods.
+
+Requires [Notifications](https://thunderstore.io/c/zelda-64-recompiled/p/ProxyMM/Notifications/).
